@@ -1,0 +1,19 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+Posts
+{% endblock title %}
+
+{% block content %}
+<h1>Все посты</h1>
+<h3>Количество постов:{{ posts|length }}</h3>
+<hr>
+{% for post in posts %}
+    <h3>{{ post.header|censor }}</h3>
+    <h4>{{ post.time_post|date:'d M Y' }}</h4>
+    <h5>{{ post.text|truncatewords:20|censor }}</h5>
+    <hr>
+{% endfor %}
+{% endblock content %}

@@ -12,8 +12,30 @@ Posts
 <hr>
 {% for post in posts %}
     <h3>{{ post.header|censor }}</h3>
+    {% for category in post.category.all %}
+        {{ category.topic }}
+    {% endfor %}
     <h4>{{ post.time_post|date:'d M Y' }}</h4>
     <h5>{{ post.text|truncatewords:20|censor }}</h5>
     <hr>
 {% endfor %}
+
+   {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
 {% endblock content %}

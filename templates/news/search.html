@@ -7,16 +7,20 @@ Posts
 {% endblock title %}
 
 {% block content %}
-<h1>Все посты</h1>
-<h3>Количество постов:{{ posts|length }}</h3>
+<h1>Поисковик</h1>
+<h3>Результатов по заданным критериям: {{ posts|length }}</h3>
+   <form action="" method="get">
+       {{ filterset.form.as_p }}
+       <input type="submit" value="Найти" />
+   </form>
 <hr>
 {% for post in posts %}
-    <h3>{{ post.header|censor }}</h3>
+    <h5><a href="{% url 'post_detail' post.id %}">{{ post.header|censor }}</a></h5>
     {% for category in post.category.all %}
         {{ category.topic }}
     {% endfor %}
-    <h4>{{ post.time_post|date:'d M Y' }}</h4>
-    <h5>{{ post.text|truncatewords:20|censor }}</h5>
+    <h6>{{ post.time_post|date:'d M Y' }}</h6>
+    <h7>{{ post.text|truncatewords:20|censor }}</h7>
     <hr>
 {% endfor %}
 

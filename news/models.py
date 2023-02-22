@@ -1,5 +1,8 @@
+from django.contrib import admin
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
+from django.core.cache import cache
 
 
 class Author(models.Model):
@@ -15,9 +18,16 @@ class Author(models.Model):
         self.rating_user = post_rating + com_rating + com_post_rating
         self.save()
 
+    def __str__(self):
+        return self.user.username
+
 
 class Category(models.Model):
-    topic = models.CharField(max_length=255, unique=True)
+    topic = models.CharField(max_length=64, unique=True)
+    subscribers = models.ManyToManyField(User, related_name='categories')
+
+    def __str__(self):
+        return self.topic
 
 
 class Post(models.Model):
@@ -33,7 +43,7 @@ class Post(models.Model):
     type_post = models.CharField(max_length=2, choices=TYPES, default=news)
     author = models.ForeignKey(Author, models.CASCADE)
     category = models.ManyToManyField(Category, through='PostCategory')
-    header = models.CharField(max_length=255)
+    header = models.CharField(max_length=128)
     text = models.TextField()
     rating_news = models.IntegerField(default=0)
 
@@ -47,9 +57,15 @@ class Post(models.Model):
     def dislike(self):
         self.rating_news -= 1
         self.save()
-
     def preview(self):
         return f'{self.text[:124]}...'
+
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.delete(f'post-{self.pk}')
 
 
 class PostCategory(models.Model):

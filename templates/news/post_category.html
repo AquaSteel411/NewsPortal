@@ -1,0 +1,55 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+Category
+{% endblock title %}
+
+{% block content %}
+<h1>Все посты категории {{ category }}</h1>
+
+<h3>Количество постов на странице: {{ post_category|length }}</h3>
+
+<hr>
+    {% if is_not_subscriber %}
+    <h5><a href="{% url 'subscribe' category.id %}" class="btn btn-secondary btn-sm">Подписаться</a></h5>
+    {% else %}
+    <h5><a href="{% url 'unsubscribe' category.id %}" class="btn btn-secondary btn-sm">Отписаться</a></h5>
+    {% endif %}
+
+{% for post in post_category %}
+    <h5><a href="{% url 'post_detail' post.id %}">{{ post.header|censor }}</a></h5>
+    {% for category in post.category.all %}
+        <a href="{% url 'post_category' category.id %}">{{ category }}</a>
+    {% endfor %}
+    <h6>{{ post.time_post|date:'d M Y' }}</h6>
+    <h7>{{ post.text|truncatewords:20|censor }}</h7>
+    {% if perms.news.change_post %}
+    <a href="{% url 'post_update' pk=post.id %}">Изменить</a>
+    {% endif %}
+    {% if perms.news.delete_post %}
+    <a href="{% url 'post_delete' post.id %}">Удалить</a>
+    {% endif %}
+    <hr>
+{% endfor %}
+
+   {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+{% endblock content %}

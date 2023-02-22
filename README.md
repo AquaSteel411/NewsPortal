@@ -21,11 +21,8 @@
 login: admin
 password: admin
 ```
-- popov_d1994@mail.ru
-```
-login: popov_d1994@mail.ru
-password: Dima123456
-```
+
+
 - popovd1994@gmail.com
 ```
 login: popovd1994@gmail.com
